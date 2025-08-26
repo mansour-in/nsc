@@ -3,6 +3,7 @@
  * Admin Participants Template
  */
 if (!defined('ABSPATH')) exit;
+$search = isset($search) ? $search : '';
 ?>
 
 <div class="wrap">
@@ -26,6 +27,7 @@ if (!defined('ABSPATH')) exit;
                     <option value="paid" <?php selected($payment_status, 'paid'); ?>><?php esc_html_e('Paid', 'nsc-core'); ?></option>
                     <option value="not_paid" <?php selected($payment_status, 'not_paid'); ?>><?php esc_html_e('Not Paid', 'nsc-core'); ?></option>
                 </select>
+                <input type="search" name="s" value="<?php echo esc_attr($search); ?>" placeholder="<?php esc_attr_e('Search participants', 'nsc-core'); ?>">
                 <input type="submit" class="button" value="<?php esc_attr_e('Filter', 'nsc-core'); ?>">
             </form>
         </div>

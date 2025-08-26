@@ -6,6 +6,7 @@ if (!defined('ABSPATH')) exit;
 
 // Get the current filter value (if any)
 $current_status = isset($_GET['status']) ? sanitize_text_field($_GET['status']) : '';
+$search = isset($search) ? $search : '';
 
 // Handle "Mark as Paid" action
 if (isset($_GET['action']) && $_GET['action'] === 'mark_as_paid' && isset($_GET['payment_id']) && isset($_GET['_wpnonce'])) {
@@ -76,6 +77,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'mark_as_paid' && isset($_GET[
                     <option value="failed" <?php selected($current_status, 'failed'); ?>><?php esc_html_e('Failed', 'nsc-core'); ?></option>
                     <option value="cancelled" <?php selected($current_status, 'cancelled'); ?>><?php esc_html_e('Cancelled', 'nsc-core'); ?></option>
                 </select>
+                <input type="search" name="s" value="<?php echo esc_attr($search); ?>" placeholder="<?php esc_attr_e('Search payments', 'nsc-core'); ?>">
                 <input type="submit" class="button" value="<?php esc_attr_e('Filter', 'nsc-core'); ?>">
             </form>
         </div>

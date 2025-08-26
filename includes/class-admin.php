@@ -183,10 +183,11 @@ class NSC_Admin {
         $per_page = 20;
         $current_page = isset($_GET['paged']) ? max(1, intval($_GET['paged'])) : 1;
         $offset = ($current_page - 1) * $per_page;
-        
+
         // Filter settings
         $category = isset($_GET['category']) ? sanitize_text_field($_GET['category']) : '';
         $payment_status = isset($_GET['payment_status']) ? sanitize_text_field($_GET['payment_status']) : '';
+        $search = isset($_GET['s']) ? sanitize_text_field($_GET['s']) : '';
         
         // Build WHERE clause
         $where_conditions = array();
@@ -203,6 +204,14 @@ class NSC_Admin {
             } else {
                 $where_conditions[] = "(pm.status IS NULL OR pm.status != 'paid')";
             }
+        }
+
+        if (!empty($search)) {
+            $like = '%' . $wpdb->esc_like($search) . '%';
+            $where_conditions[] = "(p.first_name LIKE %s OR p.last_name LIKE %s OR u.user_email LIKE %s)";
+            $where_params[] = $like;
+            $where_params[] = $like;
+            $where_params[] = $like;
         }
         
         $where_clause = !empty($where_conditions) ? 'WHERE ' . implode(' AND ', $where_conditions) : '';
@@ -257,9 +266,10 @@ class NSC_Admin {
         $per_page = 20;
         $current_page = isset($_GET['paged']) ? max(1, intval($_GET['paged'])) : 1;
         $offset = ($current_page - 1) * $per_page;
-        
+
         // Filter settings
         $status_filter = isset($_GET['status']) ? sanitize_text_field($_GET['status']) : '';
+        $search = isset($_GET['s']) ? sanitize_text_field($_GET['s']) : '';
         
         // Build WHERE clause
         $where_conditions = array();
@@ -268,6 +278,15 @@ class NSC_Admin {
         if (!empty($status_filter)) {
             $where_conditions[] = "pm.status = %s";
             $where_params[] = $status_filter;
+        }
+
+        if (!empty($search)) {
+            $like = '%' . $wpdb->esc_like($search) . '%';
+            $where_conditions[] = "(p.first_name LIKE %s OR p.last_name LIKE %s OR u.user_email LIKE %s OR CAST(pm.payment_id AS CHAR) LIKE %s)";
+            $where_params[] = $like;
+            $where_params[] = $like;
+            $where_params[] = $like;
+            $where_params[] = $like;
         }
         
         $where_clause = !empty($where_conditions) ? 'WHERE ' . implode(' AND ', $where_conditions) : '';
