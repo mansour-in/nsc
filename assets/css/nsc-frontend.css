@@ -1,0 +1,230 @@
+/**
+ * NSC Frontend Styles
+ */
+
+/* Common Elements */
+.nsc-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.nsc-button {
+    display: inline-block;
+    background-color: #4C85B2;
+    color: #ffffff;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    text-decoration: none;
+    text-align: center;
+    transition: background-color 0.3s ease;
+}
+
+.nsc-button:hover {
+    background-color: #3a6a8f;
+    color: #ffffff;
+}
+
+.nsc-button-secondary {
+    background-color: #f5f5f5;
+    color: #333333;
+    border: 1px solid #dddddd;
+}
+
+.nsc-button-secondary:hover {
+    background-color: #e8e8e8;
+    color: #333333;
+}
+
+.nsc-error-message {
+    background-color: #fee;
+    border-left: 4px solid #d43;
+    padding: 12px;
+    margin: 1rem 0;
+    color: #333;
+}
+
+/* Payment Page */
+.nsc-payment-container h1 {
+    color: #333333;
+    margin-bottom: 2rem;
+}
+
+.nsc-payment-details {
+    margin-bottom: 2rem;
+}
+
+.nsc-payment-summary {
+    background-color: #f9f9f9;
+    padding: 1rem;
+    border-radius: 4px;
+    margin: 1rem 0 2rem;
+}
+
+.nsc-payment-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #eee;
+}
+
+.nsc-payment-row:last-child {
+    border-bottom: none;
+}
+
+/* Upload Page */
+.nsc-upload-instructions {
+    background-color: #f9f9f9;
+    padding: 1rem;
+    border-radius: 4px;
+    margin-bottom: 2rem;
+}
+
+.nsc-upload-instructions ul {
+    margin-left: 1.5rem;
+}
+
+.nsc-form-row {
+    margin-bottom: 1.5rem;
+}
+
+.nsc-form-row label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.nsc-progress-container {
+    margin: 1rem 0;
+}
+
+.nsc-progress-bar-wrapper {
+    width: 100%;
+    height: 20px;
+    background-color: #f5f5f5;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.nsc-progress-bar {
+    height: 100%;
+    width: 0;
+    background-color: #4C85B2;
+    transition: width 0.3s ease;
+}
+
+.nsc-progress-percentage {
+    text-align: center;
+    margin-top: 5px;
+    font-size: 14px;
+}
+
+.nsc-pending-upload {
+    background-color: #f9f9f9;
+    padding: 1rem;
+    border-radius: 4px;
+    margin-bottom: 2rem;
+}
+
+.nsc-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+/* Confirm Video Page */
+.nsc-confirm-container h1 {
+    margin-bottom: 1.5rem;
+}
+
+.nsc-confirmation-instructions {
+    margin-bottom: 2rem;
+}
+
+.nsc-video-preview {
+    margin-bottom: 2rem;
+}
+
+.nsc-video-preview video {
+    width: 100%;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+}
+
+.nsc-video-details {
+    background-color: #f9f9f9;
+    padding: 1rem;
+    border-radius: 4px;
+}
+
+.nsc-detail-row {
+    display: flex;
+    margin-bottom: 0.5rem;
+}
+
+.nsc-detail-label {
+    font-weight: 600;
+    width: 150px;
+}
+
+.nsc-confirmation-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+/* Thank You Page */
+.nsc-thank-you-container {
+    text-align: center;
+}
+
+.nsc-success-checkmark {
+    color: #28a745;
+    font-size: 3rem;
+    margin: 2rem 0;
+}
+
+.nsc-submission-details {
+    background-color: #f9f9f9;
+    padding: 1.5rem;
+    border-radius: 4px;
+    margin: 2rem auto;
+    max-width: 600px;
+    text-align: left;
+}
+
+.nsc-next-steps {
+    margin: 2rem 0;
+}
+
+.nsc-thank-you-actions {
+    margin-top: 2rem;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+    .nsc-container {
+        padding: 1.5rem;
+        margin: 1rem;
+    }
+    
+    .nsc-confirmation-actions {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .nsc-detail-row {
+        flex-direction: column;
+    }
+    
+    .nsc-detail-label {
+        width: 100%;
+        margin-bottom: 0.25rem;
+    }
+}

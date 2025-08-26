@@ -1,0 +1,24 @@
+{
+    "name": "mansour/nsc-core",
+    "description": "WordPress plugin for National Storytelling Championship",
+    "type": "wordpress-plugin",
+    "require": {
+        "php": ">=7.4",
+        "aws/aws-sdk-php": "^3.0",
+        "razorpay/razorpay": "^2.8"
+    },
+    "autoload": {
+        "psr-4": {
+            "NSC\\": "src/"
+        }
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "platform": {
+            "php": "7.4"
+        }
+    },
+    "replace": {
+        "rmccue/requests": "*"
+    }
+}
