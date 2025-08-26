@@ -119,24 +119,61 @@ class NSC_Database {
             $user_id
         ));
     }
-    
     /**
      * Update payment after successful Razorpay transaction
+     *
+     * @param string    $order_id   Razorpay order ID
+     * @param string    $payment_id Razorpay payment ID
+     * @param string    $status     Payment status
+     * @param int|null  $user_id    WordPress user ID for fallback update
+     * @return int|false Number of rows updated or false on failure
      */
-    public function update_payment($order_id, $payment_id, $status = 'paid') {
+    public function update_payment($order_id, $payment_id, $status = 'paid', $user_id = null) {
         global $wpdb;
-        return $wpdb->update(
-            "{$wpdb->prefix}nsc_payments",
-            [
-                'razorpay_payment_id' => $payment_id,
-                'status' => $status,
-                'payment_date' => current_time('mysql')
-            ],
+
+        $table = "{$wpdb->prefix}nsc_payments";
+        $data = [
+            'razorpay_payment_id' => $payment_id,
+            'status' => $status,
+            'payment_date' => current_time('mysql')
+        ];
+
+        // First attempt: update by order ID
+        $result = $wpdb->update(
+            $table,
+            $data,
             ['razorpay_order_id' => $order_id],
             ['%s', '%s', '%s'],
             ['%s']
         );
+
+        // Fallback: update latest record for user if no rows affected
+        if ($result === 0 && $user_id) {
+            $latest_id = $wpdb->get_var($wpdb->prepare(
+                "SELECT payment_id FROM {$table} WHERE user_id = %d ORDER BY payment_id DESC LIMIT 1",
+                $user_id
+            ));
+
+            if ($latest_id) {
+                $data['razorpay_order_id'] = $order_id;
+                $result = $wpdb->update(
+                    $table,
+                    $data,
+                    ['payment_id' => $latest_id],
+                    ['%s', '%s', '%s', '%s'],
+                    ['%d']
+                );
+            }
+        }
+
+        if ($result === 0 || $result === false) {
+            error_log(sprintf('NSC_Database::update_payment failed for order %s and user %s', $order_id, $user_id));
+            return false;
+        }
+
+        return $result;
     }
+
     
     /**
      * Save uploaded video information
