@@ -116,6 +116,7 @@ try {
         );
     }
 
+    update_user_meta($user_id, 'nsc_last_order_id', $order->id);
 } catch (Exception $e) {
     wp_die('<strong>Payment Error:</strong> ' . esc_html($e->getMessage()));
 }

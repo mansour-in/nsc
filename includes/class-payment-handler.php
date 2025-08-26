@@ -76,12 +76,18 @@ class NSC_Payment_Handler {
             
             // Process payment event
             if ($webhook_data['event'] === 'payment.captured' || $webhook_data['event'] === 'payment.authorized') {
-                $payment_id = $webhook_data['payload']['payment']['entity']['id'];
-                $order_id = $webhook_data['payload']['payment']['entity']['order_id'];
-                
+                $payment_entity = $webhook_data['payload']['payment']['entity'];
+                $payment_id = $payment_entity['id'];
+                $order_id = $payment_entity['order_id'];
+                $user_id = isset($payment_entity['notes']['user_id']) ? intval($payment_entity['notes']['user_id']) : null;
+
                 // Update payment status in database
                 $database = new NSC_Database();
-                $database->update_payment($order_id, $payment_id, 'paid');
+                $result = $database->update_payment($order_id, $payment_id, 'paid', $user_id);
+
+                if ($result === false) {
+                    error_log("NSC_Payment_Handler::process_webhook failed for order {$order_id} and user {$user_id}");
+                }
             }
             
             http_response_code(200);
@@ -125,11 +131,14 @@ class NSC_Payment_Handler {
             
             // Update payment status in database
             $database = new NSC_Database();
-            $result = $database->update_payment($order_id, $payment_id, 'paid');
-            
+            $user_id = get_current_user_id();
+            $result = $database->update_payment($order_id, $payment_id, 'paid', $user_id);
+
             if ($result === false) {
-                throw new Exception('Failed to update payment record.');
+                error_log("NSC_Payment_Handler::process_payment failed for user {$user_id} and order {$order_id}");
+                wp_die('Payment was verified but updating the record failed. Please try again or contact support.');
             }
+
             
             // Redirect to upload page
             wp_redirect(home_url('/upload-video'));
