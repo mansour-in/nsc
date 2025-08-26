@@ -19,6 +19,9 @@ class NSC_Admin {
         
         // Register settings
         add_action('admin_init', array($this, 'register_settings'));
+
+        // Handle uploads CSV export
+        add_action('admin_init', array($this, 'handle_uploads_csv_export'));
     }
     
     /**
@@ -130,7 +133,7 @@ class NSC_Admin {
      */
     public function register_settings() {
         register_setting('nsc_general_settings', 'nsc_registration_form_id');
-        
+
         register_setting('nsc_r2_settings', 'nsc_r2_endpoint');
         register_setting('nsc_r2_settings', 'nsc_r2_access_key');
         register_setting('nsc_r2_settings', 'nsc_r2_secret_key');
@@ -140,6 +143,64 @@ class NSC_Admin {
         register_setting('nsc_razorpay_settings', 'nsc_razorpay_key_id');
         register_setting('nsc_razorpay_settings', 'nsc_razorpay_secret_key');
         register_setting('nsc_razorpay_settings', 'nsc_razorpay_webhook_secret');
+    }
+
+    /**
+     * Handle CSV export for uploads
+     */
+    public function handle_uploads_csv_export() {
+        if (!isset($_GET['page']) || $_GET['page'] !== 'nsc-uploads') {
+            return;
+        }
+
+        if (!isset($_GET['export']) || $_GET['export'] !== 'csv') {
+            return;
+        }
+
+        global $wpdb;
+
+        $category = isset($_GET['category']) ? sanitize_text_field($_GET['category']) : '';
+        $status   = isset($_GET['status']) && $_GET['status'] !== '' ? sanitize_text_field($_GET['status']) : 'submitted';
+
+        $where_conditions = array();
+        $where_params     = array();
+
+        if (!empty($category)) {
+            $where_conditions[] = "up.category = %s";
+            $where_params[]     = $category;
+        }
+
+        if (!empty($status)) {
+            $where_conditions[] = "up.status = %s";
+            $where_params[]     = $status;
+        }
+
+        $where_clause = !empty($where_conditions) ? 'WHERE ' . implode(' AND ', $where_conditions) : '';
+
+        $query = "SELECT up.upload_id, p.first_name, p.last_name, u.user_email, um.meta_value AS billing_phone, up.category, up.upload_date, up.video_url FROM {$wpdb->prefix}nsc_uploads up JOIN {$wpdb->prefix}nsc_participants p ON up.user_id = p.wp_user_id JOIN {$wpdb->users} u ON up.user_id = u.ID LEFT JOIN {$wpdb->usermeta} um ON um.user_id = u.ID AND um.meta_key = 'billing_phone' $where_clause ORDER BY up.upload_date DESC";
+
+        $uploads = !empty($where_params) ? $wpdb->get_results($wpdb->prepare($query, $where_params)) : $wpdb->get_results($query);
+
+        header('Content-Type: text/csv');
+        header('Content-Disposition: attachment; filename="nsc-uploads.csv"');
+
+        $output = fopen('php://output', 'w');
+        fputcsv($output, array('Upload ID', 'Participant', 'Email', 'Phone', 'Category', 'Upload Date', 'Video URL'));
+
+        foreach ($uploads as $upload) {
+            fputcsv($output, array(
+                $upload->upload_id,
+                trim($upload->first_name . ' ' . $upload->last_name),
+                $upload->user_email,
+                $upload->billing_phone,
+                $upload->category,
+                $upload->upload_date,
+                $upload->video_url,
+            ));
+        }
+
+        fclose($output);
+        exit;
     }
     
     /**

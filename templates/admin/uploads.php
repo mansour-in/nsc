@@ -30,6 +30,8 @@ if (!defined('ABSPATH')) exit;
                 </select>
                 <input type="submit" class="button" value="<?php esc_attr_e('Filter', 'nsc-core'); ?>">
             </form>
+            <?php $export_url = add_query_arg(array('export' => 'csv')); ?>
+            <a href="<?php echo esc_url($export_url); ?>" class="button"><?php esc_html_e('Export as CSV', 'nsc-core'); ?></a>
         </div>
         <div class="tablenav-pages">
             <?php if ($total_pages > 1): ?>
