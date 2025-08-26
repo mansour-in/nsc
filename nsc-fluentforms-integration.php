@@ -261,17 +261,37 @@ class NSC_FluentForms_Integration {
                 ],
                 ['%d', '%s', '%s', '%s', '%s', '%s', '%s']
             );
-            
-            // Create payment record
-            $wpdb->insert(
-                "{$wpdb->prefix}nsc_payments",
-                [
-                    'user_id' => $user_id,
-                    'status' => 'pending',
-                    'order_date' => current_time('mysql')
-                ],
-                ['%d', '%s', '%s']
+
+            // Create or update payment record
+            $existing_payment = $wpdb->get_var(
+                $wpdb->prepare(
+                    "SELECT payment_id FROM {$wpdb->prefix}nsc_payments WHERE user_id = %d",
+                    $user_id
+                )
             );
+
+            if ($existing_payment) {
+                $wpdb->update(
+                    "{$wpdb->prefix}nsc_payments",
+                    [
+                        'status' => 'pending',
+                        'order_date' => current_time('mysql')
+                    ],
+                    ['payment_id' => $existing_payment],
+                    ['%s', '%s'],
+                    ['%d']
+                );
+            } else {
+                $wpdb->insert(
+                    "{$wpdb->prefix}nsc_payments",
+                    [
+                        'user_id' => $user_id,
+                        'status' => 'pending',
+                        'order_date' => current_time('mysql')
+                    ],
+                    ['%d', '%s', '%s']
+                );
+            }
             
             // Store the user ID in a transient for the redirect handler
             set_transient('nsc_registered_user_' . $entry_id, $user_id, 5 * MINUTE_IN_SECONDS);

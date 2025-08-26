@@ -52,6 +52,7 @@ class NSC_Database {
             order_date DATETIME,
             payment_date DATETIME,
             PRIMARY KEY  (payment_id),
+            UNIQUE KEY user_id (user_id),
             FOREIGN KEY (user_id) REFERENCES {$wpdb->users}(ID)
         ) $charset_collate;";
         
